@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/completeTask"
+            android:title="Completar Tarefa" />
+    </group>
+    <group>
+        <item
+            android:id="@+id/editTask"
+            android:title="Editar Tarefa" />
+        <item
+            android:id="@+id/deleteTask"
+            android:title="Deletar Tarefa" />
+    </group>
+</menu>
