@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,43 +15,71 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.remote.Stream;
 import com.pdm.segunda_avaliacao.databinding.ActivityMainBinding;
 import com.pdm.segunda_avaliacao.model.Task;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "aaa";
     ActivityMainBinding activityMainBinding;
-    private final int NEW_TASK_REQUEST_CODE = 0;
+    public final int NEW_TASK_REQUEST_CODE = 0;
     private ArrayList<Task> tasksList = new ArrayList<>();
     private TaskAdapter taskAdapter;
+    private FirebaseAuth auth;
 
     public void populateArrayList(){
-        for (int i = 0; i < 10; i++) {
-            Task task = new Task();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("tasks")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Task task1 = new Task();
+                                task1.setCreatedAt((Long) document.getData().get("createdAt"));
+                                task1.setCreatedBy((String) document.getData().get("createdBy"));
+                                task1.setEndedAt((long) document.getData().get("endedAt"));
+                                task1.setDescription((String) document.getData().get("description"));
+                                task1.setEndedBy((String) document.getData().get("endedBy"));
+                                task1.setTitle((String) document.getData().get("title"));
+                                task1.setEndingForecastTime((Long) document.getData().get("endingForecastTime"));
+                                task1.setStatus(((Long) document.getData().get("status")).intValue());
+                                tasksList.add(task1);
+                            }
 
-            task.setCreatedAt(new Date().getTime());
-            task.setTitle("Titulo #"+i);
-            task.setDescription("Descrizao do titulo #"+1);
-            task.setStatus(1);
-
-            if (i==3 || i==6) task.setStatus(3);
-            if (i==2 || i==8 || i ==9) task.setStatus(2);
-
-            if (task.getStatus() == 3) task.setEndedBy("Usuario#"+i);
-
-            tasksList.add(task);
-        }
+                            taskAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Ligando (binding) objetos com as Views
-        populateArrayList();
         activityMainBinding = activityMainBinding.inflate(getLayoutInflater());
         setContentView(activityMainBinding.getRoot());
+
+        //Popula a lista
+        populateArrayList();
+
+        //Inicializa Auth
+        auth = FirebaseAuth.getInstance();
 
         taskAdapter = new TaskAdapter(this, android.R.layout.simple_list_item_1, tasksList);
 
@@ -88,16 +117,36 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo());
         Task task = tasksList.get(menuInfo.position);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         switch (item.getItemId()){
             case R.id.completeTask:
-                Toast.makeText(this, "completeTask", Toast.LENGTH_SHORT).show();
+                Date date = new Date();
+                task.setStatus(3);
+                task.setEndedAt(date.getTime());
+                task.setEndedBy(auth.getUid());
+
+                db.collection("tasks").document(task.getTitle()).update(task.toMap());
+                tasksList.clear();
+                populateArrayList();
                 return true;
             case R.id.editTask:
                 Toast.makeText(this, "editTask", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.deleteTask:
-                Toast.makeText(this, "deleteTask", Toast.LENGTH_SHORT).show();
+                if(task.getStatus() != 3){
+                    db.collection("tasks").document(task.getTitle()).delete();
+                    tasksList.remove(task);
+                    taskAdapter.notifyDataSetChanged();
+                }   else{
+                    activityMainBinding.warningMessage.setText("Não é possível deletar uma tarefa finalizada");
+                }
+                return true;
+            case R.id.assumeTask:
+                task.setStatus(2);
+                db.collection("tasks").document(task.getTitle()).update(task.toMap());
+                tasksList.clear();
+                populateArrayList();
                 return true;
             default:
                 return false;
@@ -120,8 +169,6 @@ public class MainActivity extends AppCompatActivity {
             Task contato = (Task) data.getSerializableExtra(Intent.EXTRA_USER);
             if (contato != null){
                 tasksList.add(contato);
-                // Notificar Adapter
-                //Ainda não criado
                 taskAdapter.notifyDataSetChanged();
                 //Lógica para adição ao banco?
             }

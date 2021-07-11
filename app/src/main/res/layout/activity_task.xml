@@ -30,6 +30,15 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/warningMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="#FF0000"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
             <EditText
                 android:id="@+id/editTextTextTitle"
                 android:layout_width="match_parent"
@@ -52,13 +61,14 @@
                 android:id="@+id/editTextEndingDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
                 android:layout_marginTop="20dp"
+                android:ems="10"
                 android:hint="Data prevista de cumprimento"
-                android:inputType="date" />
+                android:inputType="date|time" />
 
             <Button
                 android:id="@+id/buttonActionTask"
+                android:onClick="onClick"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"

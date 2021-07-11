@@ -2,11 +2,12 @@ package com.pdm.segunda_avaliacao.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
-public class Task {
+public class Task implements Serializable {
     private String createdBy;
     private String endedBy;
     private long createdAt;
