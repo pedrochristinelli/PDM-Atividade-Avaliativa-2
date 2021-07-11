@@ -3,6 +3,8 @@ package com.pdm.segunda_avaliacao;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -10,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -105,7 +108,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         getMenuInflater().inflate(R.menu.context_menu_task, menu);
+
+        Task task = tasksList.get(info.position);
+
+        if (task.getStatus() == 3){
+            MenuItem completeTask = menu.getItem(0);
+            MenuItem assumeTask = menu.getItem(1);
+            MenuItem editTask = menu.getItem(2);
+            MenuItem deleteTask = menu.getItem(3);
+            deleteTask.setVisible(false);
+            completeTask.setVisible(false);
+            assumeTask.setVisible(false);
+
+            editTask.setTitle("Ver Tarefa");
+        }
     }
 
     @Override
