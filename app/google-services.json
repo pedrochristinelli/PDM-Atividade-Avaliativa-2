@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "744370464402-si0omvdm1knq9k6k2jhboaieqgj82is5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pdm.segunda_avaliacao",
-            "certificate_hash": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
-          }
-        },
-        {
           "client_id": "744370464402-tt8snerlcfdtba6hd0loauqcabcpq1hc.apps.googleusercontent.com",
           "client_type": 3
         }

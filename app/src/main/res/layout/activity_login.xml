@@ -45,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#cbd0ea"
+                android:onClick="onClick"
                 android:layout_marginTop="10dp"
                 android:src="@drawable/common_google_signin_btn_icon_light_normal"></ImageButton>
 
@@ -55,6 +56,15 @@
                 android:layout_marginTop="15dp"
                 android:text="--------------------------------------------------------------------"
                 android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/warningMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="#FF0000"
+                android:textSize="18sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -86,8 +96,9 @@
                 android:id="@+id/buttonLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Logar-se"
                 android:layout_marginTop="10dp"
+                android:onClick="onClick"
+                android:text="Logar-se"
                 app:backgroundTint="#673AB7" />
 
             <TextView
@@ -103,6 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#cbd0ea"
+                android:onClick="onClick"
                 android:text="Esqueceu a senha?"
                 android:textColor="#616060"
                 app:backgroundTint="#cbd0ea" />
@@ -125,10 +137,11 @@
                 android:textSize="24sp" />
 
             <Button
-                android:id="@+id/buttonRegister"
+                android:id="@+id/buttonBegginRegister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:onClick="onClick"
                 android:text="Registre-se"
                 app:backgroundTint="#673AB7" />
 
