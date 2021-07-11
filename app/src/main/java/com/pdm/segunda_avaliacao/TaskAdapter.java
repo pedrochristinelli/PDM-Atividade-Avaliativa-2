@@ -51,7 +51,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
 
         if (task.getStatus() == 3){
             convertView.setBackgroundColor(0xffbaffc9);
-            taskViewHolder.taskFinalizedUserTextView.setText(task.getEndedBy());
+            taskViewHolder.taskFinalizedUserTextView.setText(task.getEndedByUsername());
             convertView.findViewById(R.id.taskFinalizedUserTextView).setVisibility(View.VISIBLE);
         } else if (task.getStatus() == 2){
             convertView.setBackgroundColor(0xffffffba);

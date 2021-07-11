@@ -5,36 +5,29 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.remote.Stream;
 import com.pdm.segunda_avaliacao.databinding.ActivityMainBinding;
 import com.pdm.segunda_avaliacao.model.Task;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "aaa";
+    private final int EDIT_TASK_REQUEST_CODE = 1;
     ActivityMainBinding activityMainBinding;
     public final int NEW_TASK_REQUEST_CODE = 0;
     private ArrayList<Task> tasksList = new ArrayList<>();
@@ -59,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                                 task1.setTitle((String) document.getData().get("title"));
                                 task1.setEndingForecastTime((Long) document.getData().get("endingForecastTime"));
                                 task1.setStatus(((Long) document.getData().get("status")).intValue());
+                                task1.setCreatedByUsername((String) document.getData().get("createdByUsername"));
+                                task1.setEndedByUsername((String) document.getData().get("endedByUsername"));
                                 tasksList.add(task1);
                             }
 
@@ -126,12 +121,25 @@ public class MainActivity extends AppCompatActivity {
                 task.setEndedAt(date.getTime());
                 task.setEndedBy(auth.getUid());
 
+                db.collection("user").document(task.getEndedBy()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull com.google.android.gms.tasks.Task<DocumentSnapshot> taskGoogle) {
+                        DocumentSnapshot documentSnapshot = taskGoogle.getResult();
+                        if (documentSnapshot.exists()){
+                            task.setEndedByUsername((String) documentSnapshot.getData().get("username").toString());
+                        }
+                    }
+                });
+
                 db.collection("tasks").document(task.getTitle()).update(task.toMap());
                 tasksList.clear();
                 populateArrayList();
                 return true;
             case R.id.editTask:
-                Toast.makeText(this, "editTask", Toast.LENGTH_SHORT).show();
+                Intent editTaskIntent = new Intent(this, TaskActivity.class);
+                editTaskIntent.putExtra(Intent.EXTRA_USER, task);
+                editTaskIntent.putExtra(Intent.EXTRA_INDEX, menuInfo.position);
+                startActivityForResult(editTaskIntent, EDIT_TASK_REQUEST_CODE);
                 return true;
             case R.id.deleteTask:
                 if(task.getStatus() != 3){

@@ -3,13 +3,17 @@ package com.pdm.segunda_avaliacao.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
 public class Task implements Serializable {
     private String createdBy;
+    private String createdByUsername;
     private String endedBy;
+    private String endedByUsername;
     private long createdAt;
     private long endedAt;
     private long endingForecastTime;
@@ -18,6 +22,22 @@ public class Task implements Serializable {
     private int status; // Status: 1- Novo; 2- Em progresso; 3- Finalizado
 
     public Task() {}
+
+    public String getCreatedByUsername() {
+        return createdByUsername;
+    }
+
+    public void setCreatedByUsername(String createdByUsername) {
+        this.createdByUsername = createdByUsername;
+    }
+
+    public String getEndedByUsername() {
+        return endedByUsername;
+    }
+
+    public void setEndedByUsername(String endedByUsername) {
+        this.endedByUsername = endedByUsername;
+    }
 
     public String getCreatedBy() {
         return createdBy;
@@ -98,8 +118,17 @@ public class Task implements Serializable {
     public String getEndingForecastTimeString(){
         Date date = new Date();
         date.setTime(this.endingForecastTime);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-        return date.toString();
+        return dateFormat.format(date);
+    }
+
+    public String getEndedAtString(){
+        Date date = new Date();
+        date.setTime(this.endedAt);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        return dateFormat.format(date);
     }
 
     public Map toMap(){
