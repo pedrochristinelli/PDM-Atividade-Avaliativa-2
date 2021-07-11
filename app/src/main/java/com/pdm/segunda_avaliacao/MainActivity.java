@@ -146,12 +146,12 @@ public class MainActivity extends AppCompatActivity {
                         if (documentSnapshot.exists()){
                             task.setEndedByUsername((String) documentSnapshot.getData().get("username").toString());
                         }
+
+                        db.collection("tasks").document(task.getTitle()).update(task.toMap());
+                        tasksList.clear();
+                        populateArrayList();
                     }
                 });
-
-                db.collection("tasks").document(task.getTitle()).update(task.toMap());
-                tasksList.clear();
-                populateArrayList();
                 return true;
             case R.id.editTask:
                 Intent editTaskIntent = new Intent(this, TaskActivity.class);
@@ -198,6 +198,9 @@ public class MainActivity extends AppCompatActivity {
                 taskAdapter.notifyDataSetChanged();
                 //Lógica para adição ao banco?
             }
+        } else if (requestCode == EDIT_TASK_REQUEST_CODE && resultCode == RESULT_OK){
+            tasksList.clear();
+            populateArrayList();
         }
     }
 }

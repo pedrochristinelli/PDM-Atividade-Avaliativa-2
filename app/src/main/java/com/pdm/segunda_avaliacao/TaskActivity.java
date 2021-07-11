@@ -38,7 +38,8 @@ public class TaskActivity extends AppCompatActivity {
 
         task = (com.pdm.segunda_avaliacao.model.Task) getIntent().getSerializableExtra(Intent.EXTRA_USER);
         if (task != null){
-            if (task.getStatus() == 2){
+            activityTaskBinding.tarefaTitle.setText("Editar Tarefa");
+            if (task.getStatus() == 2 || task.getStatus() == 1){
                 activityTaskBinding.textViewCreatedBy.setVisibility(View.VISIBLE);
                 activityTaskBinding.textViewStatus.setVisibility(View.VISIBLE);
 
@@ -49,7 +50,9 @@ public class TaskActivity extends AppCompatActivity {
                 activityTaskBinding.editTextEndingDate.setText(task.getEndingForecastTimeString());
 
                 activityTaskBinding.editTextTextTitle.setEnabled(false);
+                activityTaskBinding.buttonActionTask.setText("Salvar");
             } else if (task.getStatus() == 3){
+                activityTaskBinding.tarefaTitle.setText("Ver Tarefa");
                 activityTaskBinding.textViewCreatedBy.setVisibility(View.VISIBLE);
                 activityTaskBinding.textViewEndedAt.setVisibility(View.VISIBLE);
                 activityTaskBinding.textViewEndedBy.setVisibility(View.VISIBLE);
@@ -66,6 +69,7 @@ public class TaskActivity extends AppCompatActivity {
                 activityTaskBinding.editTextTextTitle.setEnabled(false);
                 activityTaskBinding.editTextTextDescription.setEnabled(false);
                 activityTaskBinding.editTextEndingDate.setEnabled(false);
+                activityTaskBinding.buttonActionTask.setVisibility(View.GONE);
             }
         }
     }
@@ -96,20 +100,20 @@ public class TaskActivity extends AppCompatActivity {
                             if (documentSnapshot.exists()){
                                 task.setCreatedByUsername((String) documentSnapshot.getData().get("username").toString());
                             }
+
+                            db.collection("tasks")
+                                    .document(task.getTitle())
+                                    .set(task.toMap());
+
+                            Intent retornoIntent =  new Intent();
+                            retornoIntent.putExtra(Intent.EXTRA_USER, task);
+
+                            //retornoIntent.putExtra(Intent.EXTRA_INDEX, posicao);
+                            setResult(RESULT_OK, retornoIntent);
+                            finish();
                         }
                     });
-
-                    db.collection("tasks")
-                            .document(task.getTitle())
-                            .set(task.toMap());
-
-                    Intent retornoIntent =  new Intent();
-                    retornoIntent.putExtra(Intent.EXTRA_USER, task);
-
-                    //retornoIntent.putExtra(Intent.EXTRA_INDEX, posicao);
-                    setResult(RESULT_OK, retornoIntent);
-                    finish();
-                }   else{
+                } else{
                     activityTaskBinding.warningMessage.setVisibility(View.VISIBLE);
                     activityTaskBinding.warningMessage.setText("Preencha todos os campos!");
                 }
