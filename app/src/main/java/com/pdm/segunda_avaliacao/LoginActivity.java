@@ -75,6 +75,8 @@ public class LoginActivity extends AppCompatActivity {
                         });
                 break;
             case R.id.buttonForgotPassword:
+                Intent forgotPasswordIntent = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(forgotPasswordIntent);
                 break;
         }
     }

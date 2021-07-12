@@ -9,10 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Segundaavaliacao">
+        <activity android:name=".ForgotPasswordActivity"></activity>
         <activity
             android:name=".TasksActivity"
             android:label="@string/title_activity_tasks"
-            android:theme="@style/Theme.Segundaavaliacao.NoActionBar"></activity>
+            android:theme="@style/Theme.Segundaavaliacao.NoActionBar" />
         <activity android:name=".TaskActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".MainActivity" />
